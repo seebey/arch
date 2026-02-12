@@ -531,7 +531,7 @@ Create `src/config/house.test.ts`:
 ```typescript
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { HOUSE, CASITA, SITE } from './house.js';
+import { HOUSE, CASITA, SITE, SITE_POSITIONS } from './house.js';
 
 describe('House Configuration', () => {
   it('defines main house with floors', () => {
@@ -546,6 +546,8 @@ describe('House Configuration', () => {
     assert.ok(roomNames.includes('Living Room'));
     assert.ok(roomNames.includes('Kitchen'));
     assert.ok(roomNames.includes('Dining Room'));
+    assert.ok(roomNames.includes('Foyer'));
+    assert.ok(roomNames.includes('Garage'));
   });
 
   it('has upper floor with bedrooms', () => {
@@ -554,17 +556,59 @@ describe('House Configuration', () => {
     const roomNames = upper!.rooms.map(r => r.name);
     assert.ok(roomNames.includes('Kids Bedroom 1'));
     assert.ok(roomNames.includes('Kids Bedroom 2'));
+    assert.ok(roomNames.includes('Bonus Room'));
   });
 
   it('defines casita building', () => {
     assert.equal(CASITA.name, 'Master Casita');
     assert.equal(CASITA.floors.length, 1);
+    const roomNames = CASITA.floors[0].rooms.map(r => r.name);
+    assert.ok(roomNames.includes('Master Bedroom'));
+    assert.ok(roomNames.includes('Master Bath'));
+    assert.ok(roomNames.includes('Walk-in Closet'));
   });
 
   it('defines site with buildings and walkway', () => {
     assert.equal(SITE.buildings.length, 2);
     assert.ok(SITE.walkways.length > 0);
     assert.ok(SITE.walkways[0].covered);
+    assert.equal(SITE.dimensions.width, 100);
+    assert.equal(SITE.dimensions.height, 150);
+  });
+
+  it('defines site positions for rendering', () => {
+    assert.ok(SITE_POSITIONS.mainHouse);
+    assert.ok(SITE_POSITIONS.casita);
+    assert.ok(SITE_POSITIONS.mainHouse.x >= 0);
+    assert.ok(SITE_POSITIONS.casita.y > SITE_POSITIONS.mainHouse.y);
+  });
+
+  it('rooms do not overlap on ground floor', () => {
+    const ground = HOUSE.floors.find(f => f.level === 0)!;
+    for (let i = 0; i < ground.rooms.length; i++) {
+      for (let j = i + 1; j < ground.rooms.length; j++) {
+        const a = ground.rooms[i];
+        const b = ground.rooms[j];
+        // Check for overlap (excluding adjacent rooms that share walls)
+        const aRight = a.position.x + a.dimensions.width;
+        const aBottom = a.position.y + a.dimensions.height;
+        const bRight = b.position.x + b.dimensions.width;
+        const bBottom = b.position.y + b.dimensions.height;
+
+        const overlapsX = a.position.x < bRight && aRight > b.position.x;
+        const overlapsY = a.position.y < bBottom && aBottom > b.position.y;
+
+        if (overlapsX && overlapsY) {
+          // Allow small overlaps for shared walls (0.5' thickness)
+          const overlapX = Math.min(aRight, bRight) - Math.max(a.position.x, b.position.x);
+          const overlapY = Math.min(aBottom, bBottom) - Math.max(a.position.y, b.position.y);
+          assert.ok(
+            overlapX <= 0.5 || overlapY <= 0.5,
+            `Rooms "${a.name}" and "${b.name}" overlap significantly`
+          );
+        }
+      }
+    }
   });
 });
 ```
@@ -581,111 +625,114 @@ Create `src/config/house.ts`:
 ```typescript
 import { Building, Floor, Room, Site } from '../core/types.js';
 
+// Ground floor layout - coordinates verified against design grid
+// Origin (0,0) at front-left corner, y increases toward backyard
 const groundFloorRooms: Room[] = [
   {
-    name: 'Garage',
-    position: { x: 0, y: 0 },
-    dimensions: { width: 22, height: 24 },
-    walls: [
-      { side: 'top', thickness: 0.5, exterior: true },
-      { side: 'left', thickness: 0.5, exterior: true },
-      { side: 'bottom', thickness: 0.5, exterior: true }
-    ],
-    doors: [{ position: { x: 11, y: 24 }, width: 16, swing: 'up' }],
-    windows: []
-  },
-  {
-    name: 'Mud Room',
-    position: { x: 22, y: 0 },
-    dimensions: { width: 8, height: 10 },
-    walls: [
-      { side: 'top', thickness: 0.5, exterior: true },
-      { side: 'right', thickness: 0.5, exterior: false }
-    ],
-    doors: [
-      { position: { x: 0, y: 5 }, width: 3, swing: 'right' },
-      { position: { x: 4, y: 10 }, width: 3, swing: 'down' }
-    ],
-    windows: [],
-    label: "MUD\nROOM"
-  },
-  {
     name: 'Foyer',
-    position: { x: 30, y: 0 },
-    dimensions: { width: 8, height: 12 },
+    position: { x: 0, y: 0 },
+    dimensions: { width: 10, height: 12 },
     walls: [
       { side: 'top', thickness: 0.5, exterior: true },
-      { side: 'right', thickness: 0.5, exterior: false }
+      { side: 'left', thickness: 0.5, exterior: true }
     ],
-    doors: [{ position: { x: 4, y: 0 }, width: 3, swing: 'down' }],
+    doors: [{ position: { x: 5, y: 0 }, width: 3, swing: 'down' }], // front door
     windows: [],
     label: 'FOYER'
   },
   {
     name: 'Living Room',
-    position: { x: 30, y: 12 },
-    dimensions: { width: 18, height: 20 },
+    position: { x: 10, y: 0 },
+    dimensions: { width: 20, height: 22 },
     walls: [
-      { side: 'right', thickness: 0.5, exterior: true },
-      { side: 'bottom', thickness: 0.5, exterior: true }
+      { side: 'top', thickness: 0.5, exterior: true },
+      { side: 'right', thickness: 0.5, exterior: true }
     ],
     doors: [],
     windows: [
-      { position: { x: 18, y: 5 }, width: 6 },
-      { position: { x: 18, y: 14 }, width: 6 }
+      { position: { x: 5, y: 0 }, width: 6 },  // front window
+      { position: { x: 14, y: 0 }, width: 6 }  // front window
     ],
     vaulted: true,
-    label: 'LIVING ROOM'
+    label: 'LIVING ROOM\n(vaulted)'
+  },
+  {
+    name: 'Garage',
+    position: { x: 30, y: 0 },
+    dimensions: { width: 24, height: 24 },
+    walls: [
+      { side: 'top', thickness: 0.5, exterior: true },
+      { side: 'right', thickness: 0.5, exterior: true },
+      { side: 'bottom', thickness: 0.5, exterior: true }
+    ],
+    doors: [{ position: { x: 0, y: 12 }, width: 16, swing: 'left' }], // side-entry garage door
+    windows: [],
+    label: 'GARAGE\n24×24'
+  },
+  {
+    name: 'Mud Room',
+    position: { x: 0, y: 12 },
+    dimensions: { width: 10, height: 10 },
+    walls: [
+      { side: 'left', thickness: 0.5, exterior: true }
+    ],
+    doors: [
+      { position: { x: 0, y: 5 }, width: 3, swing: 'right' },  // side entry from driveway
+      { position: { x: 10, y: 5 }, width: 3, swing: 'left' }   // to garage
+    ],
+    windows: [],
+    label: 'MUD\nROOM'
+  },
+  {
+    name: 'Main Bath',
+    position: { x: 0, y: 22 },
+    dimensions: { width: 10, height: 10 },
+    walls: [
+      { side: 'left', thickness: 0.5, exterior: true },
+      { side: 'top', thickness: 0.5, exterior: false },
+      { side: 'right', thickness: 0.5, exterior: false },
+      { side: 'bottom', thickness: 0.5, exterior: false }
+    ],
+    doors: [{ position: { x: 10, y: 5 }, width: 2.5, swing: 'left' }],
+    windows: [],
+    label: 'BATH'
   },
   {
     name: 'Dining Room',
-    position: { x: 22, y: 18 },
+    position: { x: 10, y: 22 },
     dimensions: { width: 14, height: 14 },
-    walls: [],
-    doors: [{ position: { x: 7, y: 14 }, width: 8, swing: 'down', slidingGlass: true }],
+    walls: [],  // open to living and kitchen
+    doors: [],
     windows: [],
     label: 'DINING'
   },
   {
-    name: 'Kitchen',
-    position: { x: 22, y: 32 },
-    dimensions: { width: 16, height: 18 },
-    walls: [
-      { side: 'left', thickness: 0.5, exterior: true },
-      { side: 'bottom', thickness: 0.5, exterior: true }
-    ],
-    doors: [{ position: { x: 8, y: 18 }, width: 8, swing: 'down', slidingGlass: true }],
-    windows: [{ position: { x: 0, y: 9 }, width: 4 }],
-    label: 'KITCHEN'
-  },
-  {
     name: 'Family Room',
-    position: { x: 0, y: 24 },
+    position: { x: 24, y: 22 },
     dimensions: { width: 14, height: 16 },
     walls: [
-      { side: 'left', thickness: 0.5, exterior: true },
-      { side: 'bottom', thickness: 0.5, exterior: true }
+      { side: 'right', thickness: 0.5, exterior: true }
     ],
-    doors: [{ position: { x: 7, y: 16 }, width: 6, swing: 'down', slidingGlass: true }],
-    windows: [{ position: { x: 0, y: 8 }, width: 5 }],
+    doors: [{ position: { x: 7, y: 16 }, width: 8, swing: 'down', slidingGlass: true }],
+    windows: [{ position: { x: 14, y: 8 }, width: 5 }],
     label: 'FAMILY\nROOM'
   },
   {
-    name: 'Main Bath',
-    position: { x: 14, y: 24 },
-    dimensions: { width: 8, height: 10 },
+    name: 'Kitchen',
+    position: { x: 0, y: 32 },
+    dimensions: { width: 18, height: 18 },
     walls: [
-      { side: 'top', thickness: 0.5, exterior: false },
-      { side: 'right', thickness: 0.5, exterior: false },
-      { side: 'bottom', thickness: 0.5, exterior: false },
-      { side: 'left', thickness: 0.5, exterior: false }
+      { side: 'left', thickness: 0.5, exterior: true },
+      { side: 'bottom', thickness: 0.5, exterior: true }
     ],
-    doors: [{ position: { x: 4, y: 0 }, width: 2.5, swing: 'down' }],
-    windows: [],
-    label: 'BATH'
+    doors: [{ position: { x: 9, y: 18 }, width: 8, swing: 'down', slidingGlass: true }],
+    windows: [{ position: { x: 0, y: 9 }, width: 4 }],
+    label: 'KITCHEN'
   }
 ];
 
+// Upper floor - sits above left portion of ground floor (NOT above vaulted living room)
+// Footprint: roughly 28' x 26'
 const upperFloorRooms: Room[] = [
   {
     name: 'Kids Bedroom 1',
@@ -695,77 +742,100 @@ const upperFloorRooms: Room[] = [
       { side: 'top', thickness: 0.5, exterior: true },
       { side: 'left', thickness: 0.5, exterior: true }
     ],
-    doors: [{ position: { x: 6, y: 14 }, width: 2.5, swing: 'up' }],
-    windows: [{ position: { x: 0, y: 7 }, width: 4 }],
+    doors: [{ position: { x: 12, y: 7 }, width: 2.5, swing: 'left' }],
+    windows: [
+      { position: { x: 0, y: 7 }, width: 4 },   // left window
+      { position: { x: 6, y: 0 }, width: 4 }    // front window
+    ],
     label: 'BEDROOM 1'
   },
   {
     name: 'Kids Bedroom 2',
-    position: { x: 14, y: 0 },
+    position: { x: 12, y: 0 },
     dimensions: { width: 12, height: 14 },
     walls: [
       { side: 'top', thickness: 0.5, exterior: true },
       { side: 'right', thickness: 0.5, exterior: true }
     ],
-    doors: [{ position: { x: 6, y: 14 }, width: 2.5, swing: 'up' }],
-    windows: [{ position: { x: 12, y: 7 }, width: 4 }],
+    doors: [{ position: { x: 0, y: 7 }, width: 2.5, swing: 'right' }],
+    windows: [
+      { position: { x: 12, y: 7 }, width: 4 },  // right window
+      { position: { x: 6, y: 0 }, width: 4 }    // front window
+    ],
     label: 'BEDROOM 2'
   },
   {
+    name: 'Hallway',
+    position: { x: 24, y: 0 },
+    dimensions: { width: 4, height: 14 },
+    walls: [
+      { side: 'right', thickness: 0.5, exterior: true }
+    ],
+    doors: [],
+    windows: [],
+    label: 'HALL'
+  },
+  {
     name: 'Kids Bath',
-    position: { x: 0, y: 16 },
-    dimensions: { width: 8, height: 10 },
+    position: { x: 0, y: 14 },
+    dimensions: { width: 10, height: 10 },
     walls: [
       { side: 'left', thickness: 0.5, exterior: true },
-      { side: 'bottom', thickness: 0.5, exterior: false }
+      { side: 'bottom', thickness: 0.5, exterior: true },
+      { side: 'top', thickness: 0.5, exterior: false },
+      { side: 'right', thickness: 0.5, exterior: false }
     ],
-    doors: [{ position: { x: 4, y: 0 }, width: 2.5, swing: 'down' }],
-    windows: [],
+    doors: [{ position: { x: 10, y: 5 }, width: 2.5, swing: 'left' }],
+    windows: [{ position: { x: 0, y: 5 }, width: 3 }],
     label: 'BATH'
   },
   {
     name: 'Bonus Room',
-    position: { x: 10, y: 16 },
-    dimensions: { width: 12, height: 12 },
+    position: { x: 10, y: 14 },
+    dimensions: { width: 14, height: 12 },
     walls: [
       { side: 'right', thickness: 0.5, exterior: true },
       { side: 'bottom', thickness: 0.5, exterior: true }
     ],
-    doors: [],
-    windows: [{ position: { x: 12, y: 6 }, width: 4 }],
+    doors: [],  // open to hallway
+    windows: [{ position: { x: 14, y: 6 }, width: 5 }],
     label: 'BONUS\nROOM'
-  },
-  {
-    name: 'Hallway',
-    position: { x: 10, y: 14 },
-    dimensions: { width: 6, height: 2 },
-    walls: [],
-    doors: [],
-    windows: [],
-    label: ''
   }
 ];
 
+// Casita layout - origin at top-left of casita building
+// Total footprint: 24' x 26'
 const casitaRooms: Room[] = [
   {
-    name: 'Master Bedroom',
+    name: 'Walk-in Closet',
     position: { x: 0, y: 0 },
+    dimensions: { width: 8, height: 12 },
+    walls: [
+      { side: 'top', thickness: 0.5, exterior: true },
+      { side: 'left', thickness: 0.5, exterior: true }
+    ],
+    doors: [{ position: { x: 8, y: 6 }, width: 2.5, swing: 'left' }],
+    windows: [],
+    label: 'CLOSET'
+  },
+  {
+    name: 'Master Bedroom',
+    position: { x: 8, y: 0 },
     dimensions: { width: 16, height: 18 },
     walls: [
       { side: 'top', thickness: 0.5, exterior: true },
-      { side: 'left', thickness: 0.5, exterior: true },
       { side: 'right', thickness: 0.5, exterior: true }
     ],
-    doors: [],
+    doors: [{ position: { x: 0, y: 18 }, width: 3, swing: 'up' }],  // to bathroom
     windows: [
-      { position: { x: 0, y: 9 }, width: 5 },
-      { position: { x: 16, y: 9 }, width: 5 }
+      { position: { x: 8, y: 0 }, width: 6 },   // front window
+      { position: { x: 16, y: 9 }, width: 5 }   // side window
     ],
     label: 'MASTER\nBEDROOM'
   },
   {
     name: 'Master Bath',
-    position: { x: 0, y: 18 },
+    position: { x: 0, y: 12 },
     dimensions: { width: 12, height: 14 },
     walls: [
       { side: 'left', thickness: 0.5, exterior: true },
@@ -776,25 +846,14 @@ const casitaRooms: Room[] = [
     label: 'MASTER\nBATH'
   },
   {
-    name: 'Walk-in Closet',
-    position: { x: 12, y: 18 },
-    dimensions: { width: 8, height: 12 },
-    walls: [
-      { side: 'right', thickness: 0.5, exterior: true }
-    ],
-    doors: [{ position: { x: 0, y: 6 }, width: 2.5, swing: 'right' }],
-    windows: [],
-    label: 'CLOSET'
-  },
-  {
     name: 'Entry Vestibule',
-    position: { x: 12, y: 30 },
+    position: { x: 12, y: 18 },
     dimensions: { width: 6, height: 8 },
     walls: [
       { side: 'right', thickness: 0.5, exterior: true },
       { side: 'bottom', thickness: 0.5, exterior: true }
     ],
-    doors: [{ position: { x: 3, y: 8 }, width: 3, swing: 'up' }],
+    doors: [{ position: { x: 3, y: 8 }, width: 3, swing: 'up' }],  // entry from walkway
     windows: [],
     label: 'ENTRY'
   }
@@ -828,23 +887,37 @@ export const CASITA: Building = {
   floors: [casitaFloor]
 };
 
+// Site layout: 100' wide x 150' deep lot
+// Main house at front, casita at rear-left, connected by covered walkway
 export const SITE: Site = {
   dimensions: { width: 100, height: 150 },
   buildings: [HOUSE, CASITA],
+  // Driveway runs along left side to garage
   driveway: [
-    { x: 10, y: 0 },
-    { x: 30, y: 0 },
-    { x: 30, y: 30 },
-    { x: 10, y: 30 }
+    { x: 0, y: 0 },    // front-left corner
+    { x: 20, y: 0 },   // front edge
+    { x: 20, y: 35 },  // extends past garage
+    { x: 0, y: 35 }    // back to property edge
   ],
+  // Main house position on site: front-center, ~15' setback
+  // House footprint: 54' wide (including garage) x 50' deep
+  // Casita position: rear-left, against side setback
+  // Casita at site coords: (5, 90) - leaving 5' side setback
   walkways: [
     {
-      start: { x: 0, y: 50 },
-      end: { x: 0, y: 80 },
-      width: 8,
+      start: { x: 5, y: 65 },   // from main house rear-left
+      end: { x: 5, y: 90 },     // to casita entry (30' path)
+      width: 7,
       covered: true
     }
   ]
+};
+
+// Building positions on site (for site plan rendering)
+export const SITE_POSITIONS = {
+  mainHouse: { x: 15, y: 15 },   // 15' front setback, 15' left setback
+  casita: { x: 5, y: 95 },       // 5' side setback, rear of property
+  garage: { x: 45, y: 15 }       // attached to right side of main house
 };
 ```
 
@@ -1289,29 +1362,45 @@ Expected: FAIL - Cannot find module './elevation.js'
 Create `src/drawings/elevation.ts`:
 
 ```typescript
-import { svgDoc, rect, line, text, path, polyline } from '../core/svg.js';
+import { svgDoc, rect, line, text, polyline } from '../core/svg.js';
 import { STYLES, feetToPixels } from '../styles/architectural.js';
+import { HOUSE } from '../config/house.js';
 
 type ElevationSide = 'front' | 'rear' | 'left' | 'right';
 
 const MARGIN = 50;
 const TITLE_HEIGHT = 40;
 
-// House dimensions
-const HOUSE_WIDTH = 48; // feet
-const HOUSE_DEPTH = 50;
-const GROUND_FLOOR_HEIGHT = 10;
-const UPPER_FLOOR_HEIGHT = 9;
-const ROOF_PITCH = 8 / 12; // 8:12 pitch
+// Derive dimensions from house config
+function getHouseDimensions() {
+  const groundFloor = HOUSE.floors.find(f => f.level === 0)!;
+  let maxX = 0, maxY = 0;
+  for (const room of groundFloor.rooms) {
+    const right = room.position.x + room.dimensions.width;
+    const bottom = room.position.y + room.dimensions.height;
+    if (right > maxX) maxX = right;
+    if (bottom > maxY) maxY = bottom;
+  }
+  return { width: maxX, depth: maxY };
+}
+
+// Heights are architectural constants
+const GROUND_FLOOR_HEIGHT = 10;  // feet
+const UPPER_FLOOR_HEIGHT = 9;    // feet
+const ROOF_PITCH = 8 / 12;       // 8:12 pitch
 
 export function generateElevation(side: ElevationSide, title: string): string {
-  const width = side === 'front' || side === 'rear' ? HOUSE_WIDTH : HOUSE_DEPTH;
-  const totalHeight = GROUND_FLOOR_HEIGHT + UPPER_FLOOR_HEIGHT + (width / 2) * ROOF_PITCH;
+  const houseDims = getHouseDimensions();
+  const houseWidth = houseDims.width;  // front/rear view width
+  const houseDepth = houseDims.depth;  // left/right view width
 
-  const contentWidth = feetToPixels(width);
+  const viewWidth = side === 'front' || side === 'rear' ? houseWidth : houseDepth;
+  const totalHeight = GROUND_FLOOR_HEIGHT + UPPER_FLOOR_HEIGHT + (viewWidth / 2) * ROOF_PITCH * 0.5;
+
+  const contentWidth = feetToPixels(viewWidth);
   const contentHeight = feetToPixels(totalHeight);
   const svgWidth = contentWidth + MARGIN * 2;
-  const svgHeight = contentHeight + MARGIN * 2 + TITLE_HEIGHT + 50; // extra for ground
+  const svgHeight = contentHeight + MARGIN * 2 + TITLE_HEIGHT + 50;
 
   const elements: string[] = [];
 
@@ -1326,69 +1415,93 @@ export function generateElevation(side: ElevationSide, title: string): string {
   const groundY = MARGIN + TITLE_HEIGHT + contentHeight + 30;
   elements.push(line(MARGIN - 20, groundY, svgWidth - MARGIN + 20, groundY, { stroke: 'black', strokeWidth: 2 }));
 
-  // Building outline
   const bx = MARGIN;
-  const by = groundY - feetToPixels(GROUND_FLOOR_HEIGHT + UPPER_FLOOR_HEIGHT);
+  const gfHeight = feetToPixels(GROUND_FLOOR_HEIGHT);
+  const ufHeight = feetToPixels(UPPER_FLOOR_HEIGHT);
 
-  // Ground floor
-  elements.push(rect(bx, groundY - feetToPixels(GROUND_FLOOR_HEIGHT), contentWidth, feetToPixels(GROUND_FLOOR_HEIGHT), {
+  // Ground floor outline
+  elements.push(rect(bx, groundY - gfHeight, contentWidth, gfHeight, {
     fill: 'none',
     stroke: 'black',
     strokeWidth: 2
   }));
 
-  // Upper floor (partial - 1.5 story)
-  const upperWidth = contentWidth * 0.6;
+  // Upper floor (partial - 1.5 story, centered)
+  // Upper floor is ~28' wide over the ~54' total width
+  const upperWidth = feetToPixels(28);
   const upperX = bx + (contentWidth - upperWidth) / 2;
-  elements.push(rect(upperX, by, upperWidth, feetToPixels(UPPER_FLOOR_HEIGHT), {
+  const upperY = groundY - gfHeight - ufHeight;
+  elements.push(rect(upperX, upperY, upperWidth, ufHeight, {
     fill: 'none',
     stroke: 'black',
     strokeWidth: 2
   }));
 
-  // Roof - main gable
-  const roofPeak = by - feetToPixels((width / 2) * ROOF_PITCH * 0.6);
-  const roofPoints = [
-    { x: bx - 10, y: by },
-    { x: bx + contentWidth / 2, y: roofPeak },
-    { x: bx + contentWidth + 10, y: by }
+  // Main roof - gable over full width
+  const mainRoofPeak = upperY - feetToPixels(8);
+  const mainRoofPoints = [
+    { x: bx - 10, y: groundY - gfHeight },
+    { x: bx + contentWidth / 2, y: mainRoofPeak },
+    { x: bx + contentWidth + 10, y: groundY - gfHeight }
   ];
-  elements.push(polyline(roofPoints, { fill: 'none', stroke: 'black', strokeWidth: 2 }));
+  elements.push(polyline(mainRoofPoints, { fill: 'none', stroke: 'black', strokeWidth: 2 }));
 
-  // Upper floor roof
-  const upperRoofPeak = by - feetToPixels(UPPER_FLOOR_HEIGHT) - feetToPixels(4);
+  // Upper floor cross-gable roof
+  const upperRoofPeak = upperY - feetToPixels(6);
   const upperRoofPoints = [
-    { x: upperX - 5, y: by },
+    { x: upperX - 5, y: upperY },
     { x: upperX + upperWidth / 2, y: upperRoofPeak },
-    { x: upperX + upperWidth + 5, y: by }
+    { x: upperX + upperWidth + 5, y: upperY }
   ];
   elements.push(polyline(upperRoofPoints, { fill: 'none', stroke: 'black', strokeWidth: 2 }));
 
-  // Windows - ground floor
+  // Windows - ground floor (evenly spaced)
   const windowY = groundY - feetToPixels(6);
   const windowH = feetToPixels(4);
   const windowW = feetToPixels(3);
-  for (let i = 0; i < 4; i++) {
-    const wx = bx + feetToPixels(6) + i * feetToPixels(10);
+  const numWindows = Math.floor(viewWidth / 12);
+  const windowSpacing = contentWidth / (numWindows + 1);
+
+  for (let i = 1; i <= numWindows; i++) {
+    const wx = bx + windowSpacing * i - windowW / 2;
     elements.push(rect(wx, windowY, windowW, windowH, STYLES.window));
-    // Window grid
+    // Farmhouse window grid
     elements.push(line(wx + windowW / 2, windowY, wx + windowW / 2, windowY + windowH, { stroke: 'black', strokeWidth: 0.5 }));
     elements.push(line(wx, windowY + windowH / 2, wx + windowW, windowY + windowH / 2, { stroke: 'black', strokeWidth: 0.5 }));
   }
 
+  // Upper floor windows
+  const ufWindowY = upperY + feetToPixels(2);
+  for (let i = 0; i < 2; i++) {
+    const wx = upperX + feetToPixels(4) + i * feetToPixels(16);
+    elements.push(rect(wx, ufWindowY, windowW, windowH, STYLES.window));
+    elements.push(line(wx + windowW / 2, ufWindowY, wx + windowW / 2, ufWindowY + windowH, { stroke: 'black', strokeWidth: 0.5 }));
+    elements.push(line(wx, ufWindowY + windowH / 2, wx + windowW, ufWindowY + windowH / 2, { stroke: 'black', strokeWidth: 0.5 }));
+  }
+
   // Front door (front elevation only)
   if (side === 'front') {
-    const doorX = bx + contentWidth / 2 - feetToPixels(1.5);
+    const doorX = bx + feetToPixels(5) - feetToPixels(1.5);  // near foyer position
     const doorH = feetToPixels(7);
     elements.push(rect(doorX, groundY - doorH, feetToPixels(3), doorH, { fill: '#8B4513', stroke: 'black', strokeWidth: 1 }));
   }
 
-  // Siding indication (horizontal lines)
-  for (let sy = groundY - feetToPixels(1); sy > by; sy -= feetToPixels(0.8)) {
+  // Garage door (front elevation - right side)
+  if (side === 'front') {
+    const garageX = bx + feetToPixels(35);  // garage position
+    const garageH = feetToPixels(8);
+    const garageW = feetToPixels(16);
+    elements.push(rect(garageX, groundY - garageH, garageW, garageH, { fill: '#d4a76a', stroke: 'black', strokeWidth: 1 }));
+    // Carriage door lines
+    elements.push(line(garageX + garageW / 2, groundY - garageH, garageX + garageW / 2, groundY, { stroke: 'black', strokeWidth: 1 }));
+  }
+
+  // Siding indication (horizontal lap lines)
+  for (let sy = groundY - feetToPixels(1); sy > upperY; sy -= feetToPixels(0.8)) {
     elements.push(line(bx + 2, sy, bx + contentWidth - 2, sy, { stroke: '#ddd', strokeWidth: 0.3 }));
   }
 
-  // Stone accent at base
+  // Stone wainscot at base
   elements.push(rect(bx, groundY - feetToPixels(2), contentWidth, feetToPixels(2), {
     fill: 'none',
     stroke: 'black',
@@ -1396,7 +1509,7 @@ export function generateElevation(side: ElevationSide, title: string): string {
     strokeDasharray: '2,1'
   }));
 
-  // Scale
+  // Scale notation
   elements.push(text(svgWidth - MARGIN - 80, svgHeight - 15, 'Scale: 1/4" = 1\'-0"', { fontSize: 8, textAnchor: 'start' }));
 
   return svgDoc(svgWidth, svgHeight, elements.join('\n'));
@@ -1464,7 +1577,8 @@ Create `src/drawings/site-plan.ts`:
 ```typescript
 import { Site } from '../core/types.js';
 import { svgDoc, rect, line, text, polyline } from '../core/svg.js';
-import { STYLES, feetToPixels } from '../styles/architectural.js';
+import { STYLES } from '../styles/architectural.js';
+import { SITE_POSITIONS } from '../config/house.js';
 
 const MARGIN = 50;
 const TITLE_HEIGHT = 40;
@@ -1502,64 +1616,68 @@ export function generateSitePlan(site: Site, title: string): string {
     textAnchor: 'middle'
   }));
 
-  // Driveway
-  const drivewayPoints = site.driveway.map(p => ({
-    x: MARGIN + siteFeet(p.x),
-    y: MARGIN + TITLE_HEIGHT + siteFeet(p.y)
-  }));
-  if (drivewayPoints.length > 0) {
-    elements.push(rect(
-      drivewayPoints[0].x,
-      drivewayPoints[0].y,
-      siteFeet(20),
-      siteFeet(30),
-      { fill: '#ccc', stroke: 'black', strokeWidth: 1 }
-    ));
-    elements.push(text(
-      drivewayPoints[0].x + siteFeet(10),
-      drivewayPoints[0].y + siteFeet(15),
-      'DRIVEWAY',
-      { fontSize: 8, textAnchor: 'middle' }
-    ));
+  // Driveway - use config data
+  if (site.driveway.length >= 4) {
+    const dw = site.driveway;
+    const driveX = MARGIN + siteFeet(dw[0].x);
+    const driveY = MARGIN + TITLE_HEIGHT + siteFeet(dw[0].y);
+    const driveW = siteFeet(dw[1].x - dw[0].x);
+    const driveH = siteFeet(dw[2].y - dw[0].y);
+    elements.push(rect(driveX, driveY, driveW, driveH, {
+      fill: '#ccc',
+      stroke: 'black',
+      strokeWidth: 1
+    }));
+    elements.push(text(driveX + driveW / 2, driveY + driveH / 2, 'DRIVEWAY', {
+      fontSize: 8,
+      textAnchor: 'middle'
+    }));
   }
 
-  // Main house footprint
-  const houseX = MARGIN + siteFeet(15);
-  const houseY = MARGIN + TITLE_HEIGHT + siteFeet(25);
-  const houseW = siteFeet(48);
-  const houseH = siteFeet(50);
+  // Main house footprint - use SITE_POSITIONS config
+  const houseX = MARGIN + siteFeet(SITE_POSITIONS.mainHouse.x);
+  const houseY = MARGIN + TITLE_HEIGHT + siteFeet(SITE_POSITIONS.mainHouse.y);
+  const houseW = siteFeet(38);  // main house width (excluding garage)
+  const houseH = siteFeet(50);  // main house depth
   elements.push(rect(houseX, houseY, houseW, houseH, {
     fill: '#e8e8e8',
     stroke: 'black',
     strokeWidth: 2
   }));
-  elements.push(text(houseX + houseW / 2, houseY + houseH / 2, 'MAIN HOUSE', {
+  elements.push(text(houseX + houseW / 2, houseY + houseH / 2 - 10, 'MAIN HOUSE', {
     fontSize: 10,
     textAnchor: 'middle'
   }));
+  elements.push(text(houseX + houseW / 2, houseY + houseH / 2 + 5, '(1.5 story)', {
+    fontSize: 8,
+    textAnchor: 'middle'
+  }));
 
-  // Garage indication
-  elements.push(rect(houseX, houseY, siteFeet(22), siteFeet(24), {
+  // Garage - attached to right side of main house
+  const garageX = houseX + houseW;
+  const garageY = houseY;
+  const garageW = siteFeet(24);
+  const garageH = siteFeet(24);
+  elements.push(rect(garageX, garageY, garageW, garageH, {
     fill: '#ddd',
     stroke: 'black',
     strokeWidth: 1
   }));
-  elements.push(text(houseX + siteFeet(11), houseY + siteFeet(12), 'GARAGE', {
+  elements.push(text(garageX + garageW / 2, garageY + garageH / 2, 'GARAGE', {
     fontSize: 7,
     textAnchor: 'middle'
   }));
 
-  // Covered walkway
+  // Covered walkway - use config data
   for (const walkway of site.walkways) {
-    const wx = MARGIN + siteFeet(5);
-    const wy = houseY + houseH;
+    const wx = MARGIN + siteFeet(walkway.start.x);
+    const wy = MARGIN + TITLE_HEIGHT + siteFeet(walkway.start.y);
     const ww = siteFeet(walkway.width);
-    const wh = siteFeet(30);
+    const wh = siteFeet(walkway.end.y - walkway.start.y);
     elements.push(rect(wx, wy, ww, wh, {
       fill: walkway.covered ? '#d4c4a8' : '#ccc',
       stroke: 'black',
-      strokeWidth: 1,
-      strokeDasharray: walkway.covered ? '' : '4,2'
+      strokeWidth: 1
     }));
     elements.push(text(wx + ww / 2, wy + wh / 2, 'COVERED\nWALKWAY', {
       fontSize: 6,
@@ -1567,11 +1685,11 @@ export function generateSitePlan(site: Site, title: string): string {
     }));
   }
 
-  // Casita
-  const casitaX = MARGIN + siteFeet(5);
-  const casitaY = houseY + houseH + siteFeet(30);
-  const casitaW = siteFeet(20);
-  const casitaH = siteFeet(38);
+  // Casita - use SITE_POSITIONS config
+  const casitaX = MARGIN + siteFeet(SITE_POSITIONS.casita.x);
+  const casitaY = MARGIN + TITLE_HEIGHT + siteFeet(SITE_POSITIONS.casita.y);
+  const casitaW = siteFeet(24);  // casita width
+  const casitaH = siteFeet(26);  // casita depth
   elements.push(rect(casitaX, casitaY, casitaW, casitaH, {
     fill: '#e8e8e8',
     stroke: 'black',
@@ -1582,29 +1700,37 @@ export function generateSitePlan(site: Site, title: string): string {
     textAnchor: 'middle'
   }));
 
-  // Private garden
-  elements.push(rect(casitaX - siteFeet(5), casitaY, siteFeet(5), casitaH, {
-    fill: '#90EE90',
-    stroke: 'green',
-    strokeWidth: 1
-  }));
+  // Private garden - strip between casita and side fence
+  if (SITE_POSITIONS.casita.x > 0) {
+    elements.push(rect(MARGIN, casitaY, siteFeet(SITE_POSITIONS.casita.x), casitaH, {
+      fill: '#90EE90',
+      stroke: 'green',
+      strokeWidth: 1
+    }));
+    elements.push(text(MARGIN + siteFeet(SITE_POSITIONS.casita.x / 2), casitaY + casitaH / 2, 'GARDEN', {
+      fontSize: 6,
+      textAnchor: 'middle'
+    }));
+  }
 
-  // Backyard
-  const backyardX = houseX + siteFeet(25);
-  const backyardY = houseY + houseH + siteFeet(10);
+  // Backyard label
+  const backyardX = houseX + houseW / 2 + siteFeet(15);
+  const backyardY = houseY + houseH + siteFeet(20);
   elements.push(text(backyardX, backyardY, 'BACKYARD', {
     fontSize: 12,
     textAnchor: 'middle'
   }));
 
-  // Patio indication
-  elements.push(rect(houseX + siteFeet(10), houseY + houseH, siteFeet(30), siteFeet(15), {
+  // Patio - behind main house
+  const patioX = houseX + siteFeet(5);
+  const patioY = houseY + houseH;
+  elements.push(rect(patioX, patioY, siteFeet(28), siteFeet(15), {
     fill: '#ddd',
     stroke: 'black',
     strokeWidth: 1,
     strokeDasharray: '2,2'
   }));
-  elements.push(text(houseX + siteFeet(25), houseY + houseH + siteFeet(8), 'PATIO', {
+  elements.push(text(patioX + siteFeet(14), patioY + siteFeet(8), 'PATIO', {
     fontSize: 8,
     textAnchor: 'middle'
   }));

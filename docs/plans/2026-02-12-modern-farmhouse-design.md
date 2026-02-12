@@ -64,42 +64,113 @@ A rustic modern farmhouse residential design featuring a 1.5-story main house wi
 
 ### Main House - Ground Floor (~1,500 sq ft living + garage)
 
-| Room | Dimensions | Sq Ft | Notes |
-|------|------------|-------|-------|
-| Kitchen | 16' x 18' | 288 | Island, opens to dining/living |
-| Dining Room | 14' x 14' | 196 | Casual, 6-8 person table |
-| Living Room | 18' x 20' | 360 | Vaulted ceiling, fireplace |
-| Family Room | 14' x 16' | 224 | TV/casual area |
-| Mud Room | 8' x 10' | 80 | Entry from garage, side entry from driveway |
-| Main Bathroom | 8' x 10' | 80 | Full bath |
-| Foyer/Entry | 8' x 12' | 96 | Front entrance |
-| Hallway/Circulation | - | ~140 | Stairs, corridors |
-| 2-Car Garage | 22' x 24' | 528 | Attached, side-entry |
+```
+Floor Plan Grid (1 unit = 2 feet):
+
+     0         10        20        30        40        50   54
+  0  +---------+---------+---------+---------+---------+----+
+     |         |                             |              |
+     |  FOYER  |        LIVING ROOM          |    GARAGE    |
+     |  10x12  |          20x22              |    24x24     |
+     |         |        (vaulted)            |  (side-entry)|
+ 12  +---------+                             |              |
+     |         |                             |              |
+     | MUD RM  |                             +--------------+
+     |  10x10  |                             |
+ 22  +---------+-----------------------------+
+     |         |              |              |
+     |  BATH   |    DINING    |    FAMILY    |
+     |  10x10  |    14x14     |    14x16     |
+     |         |              |              |
+ 32  +---------+--------------+              |
+     |                        |              |
+     |       KITCHEN          |              |
+     |        18x18           +--------------+
+     |                        |
+ 50  +---------+--------------+
+            BACKYARD (sliding glass doors)
+```
+
+| Room | Position | Dimensions | Sq Ft | Notes |
+|------|----------|------------|-------|-------|
+| Foyer/Entry | (0, 0) | 10' x 12' | 120 | Front door faces street |
+| Living Room | (10, 0) | 20' x 22' | 440 | Vaulted ceiling, fireplace, rear windows |
+| Mud Room | (0, 12) | 10' x 10' | 100 | Side entry from driveway, connects to garage |
+| Main Bathroom | (0, 22) | 10' x 10' | 100 | Full bath, hallway access |
+| Dining Room | (10, 22) | 14' x 14' | 196 | Casual, opens to kitchen/living |
+| Family Room | (24, 22) | 14' x 16' | 224 | TV area, sliding doors to patio |
+| Kitchen | (0, 32) | 18' x 18' | 324 | Island, sliding doors to backyard |
+| Garage | (30, 0) | 24' x 24' | 576 | Side-entry, attached right side |
+| **Ground Floor Total** | | | **~1,500** | (excluding garage) |
 
 ### Main House - Upper Floor (~640 sq ft)
 
-| Room | Dimensions | Sq Ft | Notes |
-|------|------------|-------|-------|
-| Kids Bedroom 1 | 12' x 14' | 168 | Closet included |
-| Kids Bedroom 2 | 12' x 14' | 168 | Closet included |
-| Kids Bathroom | 8' x 10' | 80 | Shared hall bath |
-| Bonus/Flex Space | 12' x 12' | 144 | Play area, study nook |
-| Hallway/Landing | - | ~80 | Open to living below |
+Upper floor sits above the left/center portion of ground floor (above foyer, mud room, bath area - NOT above vaulted living room).
+
+```
+Upper Floor Grid:
+
+     0         12        24        28
+  0  +---------+---------+---------+
+     |   KIDS  |   KIDS  |         |
+     | BEDROOM | BEDROOM |  HALL/  |
+     |    1    |    2    | LANDING |
+     |  12x14  |  12x14  |  4x14   |
+ 14  +---------+---------+---------+
+     |         |                   |
+     |  BATH   |    BONUS ROOM     |
+     |  10x10  |      14x12        |
+     |         |                   |
+ 26  +---------+-------------------+
+              (open to living below)
+```
+
+| Room | Position | Dimensions | Sq Ft | Notes |
+|------|----------|------------|-------|-------|
+| Kids Bedroom 1 | (0, 0) | 12' x 14' | 168 | Front-left, closet included |
+| Kids Bedroom 2 | (12, 0) | 12' x 14' | 168 | Front-right, closet included |
+| Hallway/Landing | (24, 0) | 4' x 14' | 56 | Stairs, open to living below |
+| Kids Bathroom | (0, 14) | 10' x 10' | 100 | Shared hall bath |
+| Bonus Room | (10, 14) | 14' x 12' | 168 | Play area, study nook |
+| **Upper Floor Total** | | | **~660** | |
 
 ### Master Casita (~600 sq ft)
 
-| Room | Dimensions | Sq Ft | Notes |
-|------|------------|-------|-------|
-| Master Bedroom | 16' x 18' | 288 | King bed, sitting area |
-| Master Bathroom | 12' x 14' | 168 | Double vanity, walk-in shower, soaking tub |
-| Walk-in Closet | 8' x 12' | 96 | Attached to bedroom |
-| Entry Vestibule | 6' x 8' | 48 | Transition from covered walkway |
+Detached structure at left rear of property, connected via covered walkway.
 
-### Covered Walkway (~200 sq ft)
+```
+Casita Floor Plan:
 
-- **Length:** ~30 feet
-- **Width:** 6-8 feet
+     0    8         24
+  0  +----+---------+
+     | CL |         |
+     |OST | MASTER  |
+     | 8  | BEDROOM |
+     | x  |  16x18  |
+     | 12 |         |
+ 12  +----+         |
+     |    |         |
+     |BATH+---------+
+     |12  | ENTRY   |
+     |x14 |   6x8   |
+ 26  +----+---------+
+      (walkway connects here)
+```
+
+| Room | Position | Dimensions | Sq Ft | Notes |
+|------|----------|------------|-------|-------|
+| Walk-in Closet | (0, 0) | 8' x 12' | 96 | Attached to bedroom |
+| Master Bedroom | (8, 0) | 16' x 18' | 288 | King bed, sitting area, windows both sides |
+| Master Bathroom | (0, 12) | 12' x 14' | 168 | Double vanity, walk-in shower, soaking tub |
+| Entry Vestibule | (12, 18) | 6' x 8' | 48 | Transition from covered walkway |
+| **Casita Total** | | | **600** | |
+
+### Covered Walkway (~210 sq ft)
+
+- **Length:** 30 feet (straight path from main house to casita)
+- **Width:** 7 feet
 - **Roof:** Extended gable with solid roof (rain protection)
+- **Connection:** Main house rear (x=0, y=50) to casita entry (x=12, y=26)
 - **Features:** Slight elevation changes with steps, integrated planters
 
 ## Entry Points
