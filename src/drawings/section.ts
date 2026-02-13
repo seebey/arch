@@ -1,4 +1,4 @@
-import { svgDoc, rect, line, text, polyline, path } from '../core/svg.js';
+import { svgDoc, rect, line, text, polyline } from '../core/svg.js';
 import { STYLES, feetToPixels } from '../styles/architectural.js';
 
 const MARGIN = 50;
