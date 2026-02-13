@@ -15,8 +15,5 @@ dist/
 .env
 .env.local
 
-# Output
-output/
-
 # Test
 *.log

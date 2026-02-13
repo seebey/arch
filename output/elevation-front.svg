@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="748" height="526" viewBox="0 0 748 526">
+<style>
+  text { font-family: 'Helvetica Neue', Arial, sans-serif; }
+</style>
+<rect x="0" y="0" width="748" height="526" fill="white"/>
+<text x="50" y="30" font-size="14" text-anchor="start">Front Elevation</text>
+<line x1="50" y1="40" x2="698" y2="40" stroke="black" stroke-width="1"/>
+<line x1="30" y1="456" x2="718" y2="456" stroke="black" stroke-width="2"/>
+<rect x="50" y="336" width="648" height="120" fill="none" stroke="black" stroke-width="2"/>
+<rect x="206" y="228" width="336" height="108" fill="none" stroke="black" stroke-width="2"/>
+<polyline points="40,336 374,132 708,336" fill="none" stroke="black" stroke-width="2"/>
+<polyline points="201,228 374,156 547,228" fill="none" stroke="black" stroke-width="2"/>
+<rect x="161.6" y="384" width="36" height="48" fill="white" stroke="black" stroke-width="1"/>
+<line x1="179.6" y1="384" x2="179.6" y2="432" stroke="black" stroke-width="0.5"/>
+<line x1="161.6" y1="408" x2="197.6" y2="408" stroke="black" stroke-width="0.5"/>
+<rect x="291.2" y="384" width="36" height="48" fill="white" stroke="black" stroke-width="1"/>
+<line x1="309.2" y1="384" x2="309.2" y2="432" stroke="black" stroke-width="0.5"/>
+<line x1="291.2" y1="408" x2="327.2" y2="408" stroke="black" stroke-width="0.5"/>
+<rect x="420.79999999999995" y="384" width="36" height="48" fill="white" stroke="black" stroke-width="1"/>
+<line x1="438.79999999999995" y1="384" x2="438.79999999999995" y2="432" stroke="black" stroke-width="0.5"/>
+<line x1="420.79999999999995" y1="408" x2="456.79999999999995" y2="408" stroke="black" stroke-width="0.5"/>
+<rect x="550.4" y="384" width="36" height="48" fill="white" stroke="black" stroke-width="1"/>
+<line x1="568.4" y1="384" x2="568.4" y2="432" stroke="black" stroke-width="0.5"/>
+<line x1="550.4" y1="408" x2="586.4" y2="408" stroke="black" stroke-width="0.5"/>
+<rect x="254" y="252" width="36" height="48" fill="white" stroke="black" stroke-width="1"/>
+<line x1="272" y1="252" x2="272" y2="300" stroke="black" stroke-width="0.5"/>
+<line x1="254" y1="276" x2="290" y2="276" stroke="black" stroke-width="0.5"/>
+<rect x="446" y="252" width="36" height="48" fill="white" stroke="black" stroke-width="1"/>
+<line x1="464" y1="252" x2="464" y2="300" stroke="black" stroke-width="0.5"/>
+<line x1="446" y1="276" x2="482" y2="276" stroke="black" stroke-width="0.5"/>
+<rect x="92" y="372" width="36" height="84" fill="#8B4513" stroke="black" stroke-width="1"/>
+<rect x="470" y="360" width="192" height="96" fill="#d4a76a" stroke="black" stroke-width="1"/>
+<line x1="566" y1="360" x2="566" y2="456" stroke="black" stroke-width="1"/>
+<line x1="52" y1="444" x2="696" y2="444" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="434.4" x2="696" y2="434.4" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="424.79999999999995" x2="696" y2="424.79999999999995" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="415.19999999999993" x2="696" y2="415.19999999999993" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="405.5999999999999" x2="696" y2="405.5999999999999" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="395.9999999999999" x2="696" y2="395.9999999999999" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="386.39999999999986" x2="696" y2="386.39999999999986" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="376.79999999999984" x2="696" y2="376.79999999999984" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="367.1999999999998" x2="696" y2="367.1999999999998" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="357.5999999999998" x2="696" y2="357.5999999999998" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="347.9999999999998" x2="696" y2="347.9999999999998" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="338.39999999999975" x2="696" y2="338.39999999999975" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="328.7999999999997" x2="696" y2="328.7999999999997" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="319.1999999999997" x2="696" y2="319.1999999999997" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="309.5999999999997" x2="696" y2="309.5999999999997" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="299.99999999999966" x2="696" y2="299.99999999999966" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="290.39999999999964" x2="696" y2="290.39999999999964" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="280.7999999999996" x2="696" y2="280.7999999999996" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="271.1999999999996" x2="696" y2="271.1999999999996" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="261.59999999999957" x2="696" y2="261.59999999999957" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="251.99999999999957" x2="696" y2="251.99999999999957" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="242.39999999999958" x2="696" y2="242.39999999999958" stroke="#ddd" stroke-width="0.3"/>
+<line x1="52" y1="232.79999999999959" x2="696" y2="232.79999999999959" stroke="#ddd" stroke-width="0.3"/>
+<rect x="50" y="432" width="648" height="24" fill="none" stroke="black" stroke-width="1" stroke-dasharray="2,1"/>
+<text x="618" y="511" font-size="8" text-anchor="start">Scale: 1/4" = 1'-0"</text>
+</svg>

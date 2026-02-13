@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="796" height="548" viewBox="0 0 796 548">
+<style>
+  text { font-family: 'Helvetica Neue', Arial, sans-serif; }
+</style>
+<rect x="0" y="0" width="796" height="548" fill="white"/>
+<text x="50" y="30" font-size="14" text-anchor="start">Section A-A</text>
+<line x1="50" y1="40" x2="746" y2="40" stroke="black" stroke-width="1"/>
+<line x1="50" y1="474" x2="746" y2="474" stroke="black" stroke-width="2"/>
+<rect x="110" y="474" width="576" height="12" fill="#888" stroke="black" stroke-width="1"/>
+<line x1="110" y1="474" x2="110" y2="354" stroke="black" stroke-width="3"/>
+<line x1="686" y1="474" x2="686" y2="354" stroke="black" stroke-width="3"/>
+<line x1="110" y1="354" x2="686" y2="354" stroke="black" stroke-width="2"/>
+<rect x="110" y="342" width="576" height="12" fill="#ddd" stroke="black" stroke-width="1"/>
+<line x1="374" y1="342" x2="374" y2="246" stroke="black" stroke-width="2"/>
+<line x1="686" y1="342" x2="686" y2="246" stroke="black" stroke-width="2"/>
+<line x1="374" y1="246" x2="686" y2="246" stroke="black" stroke-width="2"/>
+<line x1="470" y1="354" x2="470" y2="306" stroke="black" stroke-width="2"/>
+<polyline points="470,306 578,186 686,306" fill="none" stroke="black" stroke-width="2"/>
+<polyline points="86,354 398,162 710,354" fill="none" stroke="black" stroke-width="2"/>
+<text x="80" y="414" font-size="8" text-anchor="end">GROUND
+FLOOR</text>
+<text x="364" y="300" font-size="8" text-anchor="end">UPPER
+FLOOR</text>
+<text x="566" y="258" font-size="8" text-anchor="middle">VAULTED
+LIVING</text>
+<line x1="706" y1="474" x2="706" y2="354" fill="none" stroke="black" stroke-width="0.5"/>
+<line x1="701" y1="474" x2="711" y2="474" fill="none" stroke="black" stroke-width="0.5"/>
+<line x1="701" y1="354" x2="711" y2="354" fill="none" stroke="black" stroke-width="0.5"/>
+<text x="721" y="414" font-size="7" text-anchor="start">10'-0"</text>
+<text x="666" y="533" font-size="8" text-anchor="start">Scale: 1/4" = 1'-0"</text>
+</svg>

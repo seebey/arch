@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="388" height="452" viewBox="0 0 388 452">
+<style>
+  text { font-family: 'Helvetica Neue', Arial, sans-serif; }
+</style>
+<rect x="0" y="0" width="388" height="452" fill="white"/>
+<text x="50" y="30" font-size="14" text-anchor="start">Floor Plan - Master Casita</text>
+<line x1="50" y1="40" x2="338" y2="40" stroke="black" stroke-width="1"/>
+<g transform="translate(50, 90)">
+<rect x="0" y="0" width="96" height="144" fill="none" stroke="#ccc" stroke-width="0.5"/>
+<rect x="0" y="0" width="96" height="6" fill="black" stroke="black" stroke-width="3"/>
+<rect x="0" y="0" width="6" height="144" fill="black" stroke="black" stroke-width="3"/>
+<line x1="96" y1="72" x2="126" y2="72" fill="none" stroke="black" stroke-width="1"/>
+<path d="M 96 72 A 30 30 0 0 0 66 102" fill="none" stroke="black" stroke-width="1" stroke-dasharray="4,2"/>
+<rect x="96" y="0" width="192" height="216" fill="none" stroke="#ccc" stroke-width="0.5"/>
+<rect x="96" y="0" width="192" height="6" fill="black" stroke="black" stroke-width="3"/>
+<rect x="282" y="0" width="6" height="216" fill="black" stroke="black" stroke-width="3"/>
+<line x1="96" y1="216" x2="132" y2="216" fill="none" stroke="black" stroke-width="1"/>
+<path d="M 96 216 A 36 36 0 0 0 132 180" fill="none" stroke="black" stroke-width="1" stroke-dasharray="4,2"/>
+<rect x="191" y="-1" width="74" height="4" fill="white" stroke="black" stroke-width="1"/>
+<line x1="192" y1="0" x2="264" y2="0" stroke="black" stroke-width="1"/>
+<rect x="287" y="107" width="62" height="4" fill="white" stroke="black" stroke-width="1"/>
+<line x1="288" y1="108" x2="348" y2="108" stroke="black" stroke-width="1"/>
+<rect x="0" y="144" width="144" height="168" fill="none" stroke="#ccc" stroke-width="0.5"/>
+<rect x="0" y="144" width="6" height="168" fill="black" stroke="black" stroke-width="3"/>
+<rect x="0" y="306" width="144" height="6" fill="black" stroke="black" stroke-width="3"/>
+<line x1="72" y1="144" x2="102" y2="144" fill="none" stroke="black" stroke-width="1"/>
+<path d="M 72 144 A 30 30 0 0 1 102 174" fill="none" stroke="black" stroke-width="1" stroke-dasharray="4,2"/>
+<rect x="-1" y="227" width="38" height="4" fill="white" stroke="black" stroke-width="1"/>
+<line x1="0" y1="228" x2="36" y2="228" stroke="black" stroke-width="1"/>
+<rect x="144" y="216" width="72" height="96" fill="none" stroke="#ccc" stroke-width="0.5"/>
+<rect x="210" y="216" width="6" height="96" fill="black" stroke="black" stroke-width="3"/>
+<rect x="144" y="306" width="72" height="6" fill="black" stroke="black" stroke-width="3"/>
+<line x1="180" y1="312" x2="216" y2="312" fill="none" stroke="black" stroke-width="1"/>
+<path d="M 180 312 A 36 36 0 0 0 216 276" fill="none" stroke="black" stroke-width="1" stroke-dasharray="4,2"/>
+<text x="48" y="72" font-size="10" text-anchor="middle">CLOSET</text>
+<text x="48" y="88" font-size="7" text-anchor="middle">8' × 12'</text>
+<text x="192" y="102" font-size="10" text-anchor="middle">MASTER</text>
+<text x="192" y="114" font-size="10" text-anchor="middle">BEDROOM</text>
+<text x="192" y="130" font-size="7" text-anchor="middle">16' × 18'</text>
+<text x="72" y="222" font-size="10" text-anchor="middle">MASTER</text>
+<text x="72" y="234" font-size="10" text-anchor="middle">BATH</text>
+<text x="72" y="250" font-size="7" text-anchor="middle">12' × 14'</text>
+<text x="180" y="264" font-size="10" text-anchor="middle">ENTRY</text>
+<text x="180" y="280" font-size="7" text-anchor="middle">6' × 8'</text>
+</g>
+<text x="258" y="437" font-size="8" text-anchor="start">Scale: 1/4" = 1'-0"</text>
+</svg>
